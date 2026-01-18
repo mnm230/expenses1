@@ -10,33 +10,33 @@
     <style>
         /* CRITICAL CSS - INLINED FOR SPEED */
         :root {
-            /* Light Mode: Vibrant & Clean */
-            --bg-color: #F0F2F5;
+            /* Light Mode: Revolut Clean */
+            --bg-color: #F2F2F2;
             --card-bg: #FFFFFF;
-            --text-primary: #111827;
-            --text-secondary: #6B7280;
-            --accent: #6366F1; /* Indigo 500 */
-            --accent-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); /* Indigo to Purple */
-            --success: #10B981;
-            --danger: #EF4444;
-            --border: #E5E7EB;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --text-primary: #191C1F;
+            --text-secondary: #8C959F;
+            --accent: #0075EB; /* Revolut Blue */
+            --accent-gradient: #0075EB; /* Solid Blue */
+            --success: #00A86B;
+            --danger: #FF3B30;
+            --border: #E6E6E6;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Subtle, flat shadow */
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                /* Dark Mode: Deep & Neon */
-                --bg-color: #0F172A; /* Slate 900 */
-                --card-bg: #1E293B; /* Slate 800 */
-                --text-primary: #F9FAFB;
-                --text-secondary: #94A3B8;
-                --accent: #818CF8; /* Indigo 400 */
-                --accent-gradient: linear-gradient(135deg, #818CF8 0%, #A78BFA 100%);
-                --success: #34D399;
-                --danger: #F87171;
-                --border: #334155;
-                --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+                /* Dark Mode: OLED Black */
+                --bg-color: #000000; /* True Black */
+                --card-bg: #191919; /* Dark Gray */
+                --text-primary: #FFFFFF;
+                --text-secondary: #8E8E93;
+                --accent: #3B82F6; /* Bright Blue */
+                --accent-gradient: #3B82F6; /* Solid Blue */
+                --success: #30D158;
+                --danger: #FF453A;
+                --border: #2C2C2E;
+                --shadow: none; /* Flat in dark mode */
             }
         }
 
@@ -165,7 +165,7 @@
         .action-chip:hover {
             border-color: var(--accent);
             color: var(--accent);
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(0, 117, 235, 0.05); /* Blue tint */
         }
 
         .action-chip:active {
@@ -254,25 +254,24 @@
 
         /* SWAP BUTTON */
         .swap-btn {
-            width: 56px; /* Slightly larger */
+            width: 56px;
             height: 56px;
-            background: var(--accent-gradient); /* Gradient */
+            background: var(--accent); /* Solid Blue */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            margin: -28px auto; /* Adjusted for size */
+            margin: -28px auto;
             position: relative;
             z-index: 5;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); /* Colored shadow */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Subtle black shadow */
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
         }
 
         .swap-btn:active {
             transform: scale(0.9);
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
         }r(--shadow);
         }
 
@@ -342,7 +341,7 @@
             transform: translateX(-50%);
             width: 40px;
             height: 4px;
-            background: var(--accent-gradient);
+            background: var(--accent); /* Solid Blue */
             border-radius: 0 0 4px 4px;
         }   background: rgba(0, 122, 255, 0.1);
         }

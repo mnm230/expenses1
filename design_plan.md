@@ -70,3 +70,12 @@ This plan addresses the "faulty layout" by removing complexity and addresses "lo
 - **Gestures**: Add `touchstart` and `touchend` listeners to main container to detect left/right swipes for tab navigation.
 - **Clipboard**: Add click listener to `.result-value`. On click -> `navigator.clipboard.writeText()` -> Show floating "Copied" toast.
 - **Loading**: Create CSS keyframe animation `shimmer` and `.skeleton` class. Apply to ticker and market list before data arrives.
+
+## Update: Revolut Mode v1.7
+- **Palette**:
+    - Light Mode: Background `#F2F2F2` (Light Gray), Card `#FFFFFF`, Accent `#0075EB` (Revolut Blue).
+    - Dark Mode: Background `#000000` (True Black), Card `#191919` (Dark Gray), Accent `#3B82F6` (Bright Blue).
+- **Style**:
+    - **No Gradients**: Replace `linear-gradient` with solid colors.
+    - **No Glows**: Remove colored `box-shadow` from buttons. Use subtle black shadows only for depth.
+    - **Flat Tabs**: Active tabs use solid blue underline, no gradient.
