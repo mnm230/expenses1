@@ -142,6 +142,34 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            position: relative;
+        }
+
+        .currency-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .currency-flag {
+            position: absolute;
+            left: 12px;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        select {
+            appearance: none;
+            background: var(--bg-color);
+            border: none;
+            padding: 10px 16px 10px 44px; /* Added padding for flag */
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            outline: none;
         }
 
         input[type="number"] {
@@ -319,15 +347,17 @@
                 <div class="input-group">
                     <label>You Pay</label>
                     <div class="input-row">
-                        <input type="number" id="amount" value="1" inputmode="decimal">
-                        <select id="from-currency">
-                            <option value="USD">USD</option>
-                            <option value="EUR">EUR</option>
-                            <option value="GBP">GBP</option>
-                            <option value="AED">AED</option>
-                            <option value="USDT">USDT</option>
-                            <option value="USDC">USDC</option>
-                        </select>
+                        <input type="text" id="amount" value="1" inputmode="decimal" autocomplete="off">
+                        <div class="currency-wrapper">
+                            <span class="currency-flag" id="from-flag">🇺🇸</span>
+                            <select id="from-currency">
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <option value="AED">AED</option>
+                                <option value="USDT">USDT</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -341,14 +371,16 @@
                     <label>You Receive</label>
                     <div class="input-row">
                         <div class="result-value" id="result">0.00</div>
-                        <select id="to-currency">
-                            <option value="EUR" selected>EUR</option>
-                            <option value="USD">USD</option>
-                            <option value="GBP">GBP</option>
-                            <option value="AED">AED</option>
-                            <option value="USDT">USDT</option>
-                            <option value="USDC">USDC</option>
-                        </select>
+                        <div class="currency-wrapper">
+                            <span class="currency-flag" id="to-flag">🇪🇺</span>
+                            <select id="to-currency">
+                                <option value="EUR" selected>EUR</option>
+                                <option value="USD">USD</option>
+                                <option value="GBP">GBP</option>
+                                <option value="AED">AED</option>
+                                <option value="USDT">USDT</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="result-sub" id="rate-display">1 USD = 0.00 EUR</div>
                 </div>
@@ -394,7 +426,7 @@
         const CACHE_DURATION = 1000 * 60 * 60; // 1 hour cache validity for offline start
 
         let rates = {
-            USD: 1, EUR: 0.92, GBP: 0.79, AED: 3.67, USDT: 1, USDC: 1
+            USD: 1, EUR: 0.92, GBP: 0.79, AED: 3.67, USDT: 1
         };
 
         // --- DOM ELEMENTS ---
@@ -406,6 +438,16 @@
         const swapBtn = document.getElementById('swap-btn');
         const ticker = document.getElementById('ticker');
         const themeToggle = document.getElementById('theme-toggle');
+        const fromFlag = document.getElementById('from-flag');
+        const toFlag = document.getElementById('to-flag');
+
+        const FLAGS = {
+            'USD': '🇺🇸',
+            'EUR': '🇪🇺',
+            'GBP': '🇬🇧',
+            'AED': '🇦🇪',
+            'USDT': '₮'
+        };
 
         // --- INIT ---
         async function init() {
@@ -419,6 +461,13 @@
                 navigator.serviceWorker.register('service-worker.js')
                     .then(() => console.log('SW Registered'))
                     .catch(err => console.log('SW Fail', err));
+            }
+        }
+
+        // --- HAPTICS ---
+        function triggerHaptic() {
+            if (navigator.vibrate) {
+                navigator.vibrate(10); // 10ms "tick"
             }
         }
 
@@ -449,7 +498,6 @@
                     // So 1 USDT = $1.00. 
                     // To get "How many USDT per USD", we invert.
                     rates.USDT = 1 / cryptoData.tether.usd;
-                    rates.USDC = 1 / cryptoData['usd-coin'].usd;
                     
                     // Fiat rates derived from USDT pair (as proxy) or hardcoded fallbacks if API limits
                     // For production, use a dedicated Forex API. Here we use static fallbacks updated via USDT ratio if needed
@@ -470,7 +518,9 @@
         }
 
         function updateConversion() {
-            const amount = parseFloat(amountInput.value) || 0;
+            // Remove commas for calculation
+            const rawValue = amountInput.value.replace(/,/g, '');
+            const amount = parseFloat(rawValue) || 0;
             const from = fromSelect.value;
             const to = toSelect.value;
 
@@ -508,15 +558,56 @@
         }
 
         function setupEventListeners() {
-            amountInput.addEventListener('input', updateConversion);
-            fromSelect.addEventListener('change', updateConversion);
-            toSelect.addEventListener('change', updateConversion);
+            // Smart Formatting Input
+            amountInput.addEventListener('input', (e) => {
+                // 1. Get cursor position
+                let cursorPosition = e.target.selectionStart;
+                const originalLength = e.target.value.length;
+
+                // 2. Strip non-numeric (keep decimal)
+                let value = e.target.value.replace(/[^\d.]/g, '');
+                
+                // 3. Handle multiple decimals
+                const parts = value.split('.');
+                if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
+
+                // 4. Format with commas
+                if (parts[0]) {
+                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                }
+                const formatted = parts.join('.');
+
+                // 5. Update value
+                e.target.value = formatted;
+
+                // 6. Restore cursor (approximate)
+                const newLength = formatted.length;
+                cursorPosition += (newLength - originalLength);
+                e.target.setSelectionRange(cursorPosition, cursorPosition);
+
+                updateConversion();
+            });
+            
+            fromSelect.addEventListener('change', () => {
+                fromFlag.textContent = FLAGS[fromSelect.value];
+                updateConversion();
+            });
+            
+            toSelect.addEventListener('change', () => {
+                toFlag.textContent = FLAGS[toSelect.value];
+                updateConversion();
+            });
 
             swapBtn.addEventListener('click', () => {
+                triggerHaptic();
                 // Swap values
                 const temp = fromSelect.value;
                 fromSelect.value = toSelect.value;
                 toSelect.value = temp;
+                
+                // Update Flags
+                fromFlag.textContent = FLAGS[fromSelect.value];
+                toFlag.textContent = FLAGS[toSelect.value];
                 
                 // Animate
                 swapBtn.style.transform = 'rotate(180deg)';
@@ -527,6 +618,7 @@
 
             // Theme Toggle
             themeToggle.addEventListener('click', () => {
+                triggerHaptic();
                 const isDark = document.body.classList.toggle('dark-mode');
                 // In a real app, we'd toggle a class on <html> or update CSS vars
                 // For this inline CSS, we rely on media query, but let's force it via class
@@ -546,6 +638,7 @@
             // Tab Navigation
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', () => {
+                    triggerHaptic();
                     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                     document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
                     
