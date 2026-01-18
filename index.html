@@ -123,6 +123,20 @@
             box-shadow: var(--shadow);
             margin-bottom: 16px;
             transition: transform 0.2s ease;
+            position: relative;
+            overflow: hidden; /* For progress bar */
+        }
+
+        /* REFRESH PROGRESS BAR */
+        .refresh-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            width: 0%;
+            transition: width 1s linear;
+            opacity: 0.7;
         }
 
         .input-group {
@@ -153,26 +167,31 @@
 
         .currency-flag {
             position: absolute;
-            left: 12px;
-            font-size: 20px;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
             pointer-events: none;
             z-index: 2;
+            line-height: 1;
         }
 
         select {
             appearance: none;
             background: var(--bg-color);
             border: none;
-            padding: 10px 16px 10px 44px; /* Added padding for flag */
-            border-radius: 12px;
-            font-size: 16px;
+            padding: 12px 16px 12px 48px; /* More padding for flag */
+            border-radius: 14px;
+            font-size: 17px;
             font-weight: 600;
             color: var(--text-primary);
             font-family: var(--font-family);
             outline: none;
+            cursor: pointer;
+            min-width: 110px;
         }
 
-        input[type="number"] {
+        input[type="text"] {
             flex: 1;
             background: transparent;
             border: none;
@@ -182,9 +201,11 @@
             width: 100%;
             font-family: var(--font-family);
             outline: none;
+            padding: 0;
+            margin: 0;
         }
 
-        input[type="number"]::placeholder {
+        input[type="text"]::placeholder {
             color: var(--border);
         }
 
@@ -344,6 +365,7 @@
         <!-- SWAP TAB -->
         <div id="tab-swap" class="view active">
             <div class="card">
+                <div class="refresh-bar" id="refresh-bar"></div>
                 <div class="input-group">
                     <label>You Pay</label>
                     <div class="input-row">
@@ -454,7 +476,7 @@
             loadCachedData();
             setupEventListeners();
             updateConversion();
-            fetchFreshData(); // Background fetch
+            startAutoRefresh(); // Start 30s loop
             
             // PWA Service Worker
             if ('serviceWorker' in navigator) {
@@ -469,6 +491,38 @@
             if (navigator.vibrate) {
                 navigator.vibrate(10); // 10ms "tick"
             }
+        }
+
+        // --- AUTO REFRESH ---
+        let refreshTimer;
+        let progressInterval;
+        const REFRESH_INTERVAL = 30; // Seconds
+
+        function startAutoRefresh() {
+            fetchFreshData();
+            resetProgressBar();
+            
+            // Clear existing
+            if (refreshTimer) clearInterval(refreshTimer);
+            
+            // Set new loop
+            refreshTimer = setInterval(() => {
+                fetchFreshData();
+                resetProgressBar();
+            }, REFRESH_INTERVAL * 1000);
+        }
+
+        function resetProgressBar() {
+            const bar = document.getElementById('refresh-bar');
+            bar.style.transition = 'none';
+            bar.style.width = '0%';
+            
+            // Force reflow
+            void bar.offsetWidth;
+            
+            // Start animation
+            bar.style.transition = `width ${REFRESH_INTERVAL}s linear`;
+            bar.style.width = '100%';
         }
 
         // --- CORE LOGIC ---

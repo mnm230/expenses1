@@ -45,3 +45,8 @@ Mobile screens are tall. We will place interactive elements where the thumb natu
 4.  **PWA**: Add manifest and service worker for installability.
 
 This plan addresses the "faulty layout" by removing complexity and addresses "loading times" by removing heavy assets.
+
+## Update: Auto-Refresh & UI Polish v1.2
+- **Logic**: Fetch new rates every **30 seconds**.
+- **UX**: Add a **visual progress bar** (slim line at the top of the card) to indicate the next update.
+- **UI**: Fix alignment of flags within input fields to ensure they are vertically centered and have proper breathing room.
