@@ -10,25 +10,33 @@
     <style>
         /* CRITICAL CSS - INLINED FOR SPEED */
         :root {
-            --bg-color: #F5F5F7;
+            /* Light Mode: Vibrant & Clean */
+            --bg-color: #F0F2F5;
             --card-bg: #FFFFFF;
-            --text-primary: #000000;
-            --text-secondary: #8E8E93;
-            --accent: #007AFF;
-            --border: #E5E5EA;
-            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --accent: #6366F1; /* Indigo 500 */
+            --accent-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); /* Indigo to Purple */
+            --success: #10B981;
+            --danger: #EF4444;
+            --border: #E5E7EB;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #000000;
-                --card-bg: #1C1C1E;
-                --text-primary: #FFFFFF;
-                --text-secondary: #8E8E93;
-                --accent: #0A84FF;
-                --border: #38383A;
-                --shadow: 0 4px 12px rgba(0,0,0,0.2);
+                /* Dark Mode: Deep & Neon */
+                --bg-color: #0F172A; /* Slate 900 */
+                --card-bg: #1E293B; /* Slate 800 */
+                --text-primary: #F9FAFB;
+                --text-secondary: #94A3B8;
+                --accent: #818CF8; /* Indigo 400 */
+                --accent-gradient: linear-gradient(135deg, #818CF8 0%, #A78BFA 100%);
+                --success: #34D399;
+                --danger: #F87171;
+                --border: #334155;
+                --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
             }
         }
 
@@ -94,8 +102,8 @@
             font-weight: 600;
         }
 
-        .up { color: #34C759; }
-        .down { color: #FF3B30; }
+        .up { color: var(--success); }
+        .down { color: var(--danger); }
 
         @keyframes ticker {
             0% { transform: translateX(100%); }
@@ -143,14 +151,21 @@
 
         .action-chip {
             background: var(--bg-color);
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             cursor: pointer;
             white-space: nowrap;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .action-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(99, 102, 241, 0.05);
         }
 
         .action-chip:active {
@@ -239,19 +254,26 @@
 
         /* SWAP BUTTON */
         .swap-btn {
-            width: 48px;
-            height: 48px;
-            background: var(--bg-color);
+            width: 56px; /* Slightly larger */
+            height: 56px;
+            background: var(--accent-gradient); /* Gradient */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: -30px auto -10px; /* Pull up into previous card */
+            color: white;
+            margin: -28px auto; /* Adjusted for size */
             position: relative;
             z-index: 5;
-            border: 4px solid var(--card-bg); /* Mask effect */
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); /* Colored shadow */
             cursor: pointer;
-            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .swap-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }r(--shadow);
         }
 
         .swap-btn svg {
@@ -309,7 +331,20 @@
 
         .nav-item.active {
             color: var(--accent);
-            background: rgba(0, 122, 255, 0.1);
+            position: relative;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: var(--accent-gradient);
+            border-radius: 0 0 4px 4px;
+        }   background: rgba(0, 122, 255, 0.1);
         }
 
         .nav-item svg {
