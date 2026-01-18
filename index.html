@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F7">
+    <meta name="description" content="Maleks SWAP - Instant Currency Converter">
+    <title>Maleks SWAP</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* CRITICAL CSS - INLINED FOR SPEED */
+        :root {
+            --bg-color: #F5F5F7;
+            --card-bg: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --accent: #007AFF;
+            --border: #E5E5EA;
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --card-bg: #1C1C1E;
+                --text-primary: #FFFFFF;
+                --text-secondary: #8E8E93;
+                --accent: #0A84FF;
+                --border: #38383A;
+                --shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* App-like feel */
+        }
+
+        /* HEADER */
+        header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-color);
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* TICKER */
+        .ticker-wrap {
+            width: 100%;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 10px 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .ticker {
+            display: inline-block;
+            animation: ticker 30s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            padding: 0 20px;
+            color: var(--text-secondary);
+        }
+
+        .ticker-item span {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .up { color: #34C759; }
+        .down { color: #FF3B30; }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Start from top on mobile */
+        }
+
+        /* CARD SYSTEM */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 480px; /* Desktop constraint */
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+            width: 100%;
+            font-family: var(--font-family);
+            outline: none;
+        }
+
+        input[type="number"]::placeholder {
+            color: var(--border);
+        }
+
+        select {
+            appearance: none;
+            background: var(--bg-color);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            outline: none;
+        }
+
+        /* SWAP BUTTON */
+        .swap-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -30px auto -10px; /* Pull up into previous card */
+            position: relative;
+            z-index: 5;
+            border: 4px solid var(--card-bg); /* Mask effect */
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        .swap-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent);
+            transition: transform 0.3s ease;
+        }
+
+        .swap-btn:active svg {
+            transform: rotate(180deg);
+        }
+
+        /* RESULT */
+        .result-display {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .result-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -1px;
+        }
+
+        .result-sub {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* BOTTOM NAV */
+        nav {
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            padding: 10px 0;
+            padding-bottom: env(safe-area-inset-bottom); /* iPhone X+ safe area */
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 12px;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            background: rgba(0, 122, 255, 0.1);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        
+        /* FLUID TYPOGRAPHY & SPACING */
+        @media (min-width: 375px) {
+            h1 { font-size: 24px; }
+            .result-value { font-size: 48px; }
+        }
+
+        /* DESKTOP TWEAKS */
+        @media (min-width: 768px) {
+            body {
+                background-color: #E5E5EA; /* Distinct desktop background */
+            }
+            
+            main {
+                justify-content: center; /* Center vertically on desktop */
+                max-width: 100%;
+            }
+            
+            .card {
+                padding: 40px;
+                margin-bottom: 24px;
+            }
+
+            /* On desktop, simulate a mobile app container */
+            .app-container {
+                width: 100%;
+                max-width: 420px;
+                height: 85vh;
+                background: var(--bg-color);
+                border-radius: 40px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                margin: 0 auto;
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Maleks SWAP</h1>
+        <div id="theme-toggle" style="cursor: pointer;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </div>
+    </header>
+
+    <div class="ticker-wrap">
+        <div class="ticker" id="ticker">
+            <!-- Ticker items injected by JS -->
+            <div class="ticker-item">Loading market data...</div>
+        </div>
+    </div>
+
+    <main>
+        <!-- SWAP TAB -->
+        <div id="tab-swap" class="view active">
+            <div class="card">
+                <div class="input-group">
+                    <label>You Pay</label>
+                    <div class="input-row">
+                        <input type="number" id="amount" value="1" inputmode="decimal">
+                        <select id="from-currency">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="AED">AED</option>
+                            <option value="USDT">USDT</option>
+                            <option value="USDC">USDC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swap-btn" id="swap-btn">
+                <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+            </div>
+
+            <div class="card" style="margin-top: -24px; padding-top: 40px;">
+                <div class="input-group">
+                    <label>You Receive</label>
+                    <div class="input-row">
+                        <div class="result-value" id="result">0.00</div>
+                        <select id="to-currency">
+                            <option value="EUR" selected>EUR</option>
+                            <option value="USD">USD</option>
+                            <option value="GBP">GBP</option>
+                            <option value="AED">AED</option>
+                            <option value="USDT">USDT</option>
+                            <option value="USDC">USDC</option>
+                        </select>
+                    </div>
+                    <div class="result-sub" id="rate-display">1 USD = 0.00 EUR</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STOCKS TAB (Placeholder) -->
+        <div id="tab-stocks" class="view hidden">
+            <div class="card">
+                <h2>Market Watch</h2>
+                <p style="color: var(--text-secondary); margin-top: 10px;">Live stock data coming soon.</p>
+            </div>
+        </div>
+
+        <!-- INSIGHTS TAB (Placeholder) -->
+        <div id="tab-insights" class="view hidden">
+            <div class="card">
+                <h2>Insights</h2>
+                <p style="color: var(--text-secondary); margin-top: 10px;">Market analysis coming soon.</p>
+            </div>
+        </div>
+    </main>
+
+    <nav>
+        <div class="nav-item active" data-target="tab-swap">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            <span>Swap</span>
+        </div>
+        <div class="nav-item" data-target="tab-stocks">
+            <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+            <span>Stocks</span>
+        </div>
+        <div class="nav-item" data-target="tab-insights">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <span>Insights</span>
+        </div>
+    </nav>
+
+    <script>
+        // --- STATE & CACHE ---
+        const CACHE_KEY = 'maleks_rates_v1';
+        const CACHE_TIME = 'maleks_time_v1';
+        const CACHE_DURATION = 1000 * 60 * 60; // 1 hour cache validity for offline start
+
+        let rates = {
+            USD: 1, EUR: 0.92, GBP: 0.79, AED: 3.67, USDT: 1, USDC: 1
+        };
+
+        // --- DOM ELEMENTS ---
+        const amountInput = document.getElementById('amount');
+        const fromSelect = document.getElementById('from-currency');
+        const toSelect = document.getElementById('to-currency');
+        const resultDisplay = document.getElementById('result');
+        const rateDisplay = document.getElementById('rate-display');
+        const swapBtn = document.getElementById('swap-btn');
+        const ticker = document.getElementById('ticker');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // --- INIT ---
+        async function init() {
+            loadCachedData();
+            setupEventListeners();
+            updateConversion();
+            fetchFreshData(); // Background fetch
+            
+            // PWA Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(() => console.log('SW Registered'))
+                    .catch(err => console.log('SW Fail', err));
+            }
+        }
+
+        // --- CORE LOGIC ---
+        function loadCachedData() {
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (cached) {
+                rates = JSON.parse(cached);
+                console.log('Loaded cached rates');
+            }
+        }
+
+        async function fetchFreshData() {
+            try {
+                // Parallel fetch for speed
+                const [cryptoRes, goldRes] = await Promise.all([
+                    fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether,usd-coin,bitcoin,ethereum&vs_currencies=usd,eur,gbp,aed'),
+                    fetch('https://finnhub.io/api/v1/quote?symbol=OANDA:XAU_USD&token=ctcn691r01qgg486pl10ctcn691r01qgg486pl1g') // Public key for demo
+                ]);
+
+                const cryptoData = await cryptoRes.json();
+                const goldData = await goldRes.json();
+
+                // Update Rates (Base USD)
+                if (cryptoData.tether) {
+                    // Normalize: 1 USD = ? Currency
+                    // CoinGecko gives Price of 1 Unit in USD. 
+                    // So 1 USDT = $1.00. 
+                    // To get "How many USDT per USD", we invert.
+                    rates.USDT = 1 / cryptoData.tether.usd;
+                    rates.USDC = 1 / cryptoData['usd-coin'].usd;
+                    
+                    // Fiat rates derived from USDT pair (as proxy) or hardcoded fallbacks if API limits
+                    // For production, use a dedicated Forex API. Here we use static fallbacks updated via USDT ratio if needed
+                    // or just keep the static ones if we don't have a free Forex API key handy.
+                    // Let's assume static for fiat stability in this demo, or derive if possible.
+                }
+
+                // Save to Cache
+                localStorage.setItem(CACHE_KEY, JSON.stringify(rates));
+                localStorage.setItem(CACHE_TIME, Date.now());
+                
+                updateTicker(cryptoData, goldData);
+                updateConversion();
+
+            } catch (e) {
+                console.log('Offline or API limit', e);
+            }
+        }
+
+        function updateConversion() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const from = fromSelect.value;
+            const to = toSelect.value;
+
+            // Convert: Amount / FromRate * ToRate
+            // (Assuming rates are "Units per USD")
+            const valueInUSD = amount / rates[from];
+            const result = valueInUSD * rates[to];
+
+            // Format: 2-6 decimals for precision
+            resultDisplay.textContent = result.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 6
+            });
+
+            // Rate Display
+            const singleRate = (1 / rates[from]) * rates[to];
+            rateDisplay.textContent = `1 ${from} = ${singleRate.toLocaleString(undefined, {maximumFractionDigits: 4})} ${to}`;
+        }
+
+        function updateTicker(crypto, gold) {
+            const items = [
+                { name: 'GOLD', price: gold.c, change: gold.dp },
+                { name: 'BTC', price: crypto.bitcoin.usd, change: 0 }, // CG simple endpoint doesn't give change without extra params
+                { name: 'ETH', price: crypto.ethereum.usd, change: 0 }
+            ];
+
+            ticker.innerHTML = items.map(item => `
+                <div class="ticker-item">
+                    ${item.name} <span>$${item.price.toLocaleString()}</span>
+                    <span class="${item.change >= 0 ? 'up' : 'down'}">
+                        ${item.change > 0 ? '▲' : '▼'} ${Math.abs(item.change).toFixed(2)}%
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function setupEventListeners() {
+            amountInput.addEventListener('input', updateConversion);
+            fromSelect.addEventListener('change', updateConversion);
+            toSelect.addEventListener('change', updateConversion);
+
+            swapBtn.addEventListener('click', () => {
+                // Swap values
+                const temp = fromSelect.value;
+                fromSelect.value = toSelect.value;
+                toSelect.value = temp;
+                
+                // Animate
+                swapBtn.style.transform = 'rotate(180deg)';
+                setTimeout(() => swapBtn.style.transform = 'rotate(0deg)', 300);
+                
+                updateConversion();
+            });
+
+            // Theme Toggle
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.body.classList.toggle('dark-mode');
+                // In a real app, we'd toggle a class on <html> or update CSS vars
+                // For this inline CSS, we rely on media query, but let's force it via class
+                if (document.body.style.getPropertyValue('--bg-color') === '#000000') {
+                    // Switch to Light
+                    document.documentElement.style.setProperty('--bg-color', '#F5F5F7');
+                    document.documentElement.style.setProperty('--card-bg', '#FFFFFF');
+                    document.documentElement.style.setProperty('--text-primary', '#000000');
+                } else {
+                    // Switch to Dark
+                    document.documentElement.style.setProperty('--bg-color', '#000000');
+                    document.documentElement.style.setProperty('--card-bg', '#1C1C1E');
+                    document.documentElement.style.setProperty('--text-primary', '#FFFFFF');
+                }
+            });
+            
+            // Tab Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+                    
+                    item.classList.add('active');
+                    document.getElementById(item.dataset.target).classList.remove('hidden');
+                });
+            });
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
