@@ -85,3 +85,9 @@ This plan addresses the "faulty layout" by removing complexity and addresses "lo
 - **Result**: Change `.result-value` color to `var(--accent)` (Blue).
 - **Swap Button**: Add `border: 4px solid var(--card-bg)` to create a "cutout" effect.
 - **Nav Bar**: Add `border-top: 1px solid var(--border)`.
+
+## Update: Optimization v1.9
+- **SEO**: Add `<meta property="og:image">`, `twitter:card`, and detailed description.
+- **PWA**: Ensure `manifest.json` has `display: standalone` and valid icons.
+- **Offline**: Update `service-worker.js` to cache `index.html` and assets aggressively.
+- **A11y**: Add `aria-label` to buttons (Swap, Theme Toggle) and `alt` tags if needed.
