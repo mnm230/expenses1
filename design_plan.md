@@ -54,3 +54,14 @@ This plan addresses the "faulty layout" by removing complexity and addresses "lo
 ## Update: Cleaner Refresh v1.3
 - **Logic**: Change auto-refresh interval from 30s to **60 seconds**.
 - **UI**: Remove the visual progress bar for a cleaner, less distracting interface. Updates will happen silently in the background.
+
+## Update: Clarity & Content v1.4
+- **Typography**: Increase font weight of currency selectors to **800 (Extra Bold)** and increase size to **20px**. Ensure high contrast against background.
+- **Quick Actions**: Add a row of helper chips: `+100`, `+1k`, `Max`, `Clear`.
+- **Content**: Replace "Coming Soon" in Stocks tab with a static (or mock-live) list of major commodities and indices:
+    - Gold (XAU)
+    - Silver (XAG)
+    - Oil (WTI)
+    - S&P 500
+    - Bitcoin (BTC)
+    - Ethereum (ETH)
