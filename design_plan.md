@@ -65,3 +65,8 @@ This plan addresses the "faulty layout" by removing complexity and addresses "lo
     - S&P 500
     - Bitcoin (BTC)
     - Ethereum (ETH)
+
+## Update: Mobile Usability v1.5
+- **Gestures**: Add `touchstart` and `touchend` listeners to main container to detect left/right swipes for tab navigation.
+- **Clipboard**: Add click listener to `.result-value`. On click -> `navigator.clipboard.writeText()` -> Show floating "Copied" toast.
+- **Loading**: Create CSS keyframe animation `shimmer` and `.skeleton` class. Apply to ticker and market list before data arrives.
