@@ -79,3 +79,9 @@ This plan addresses the "faulty layout" by removing complexity and addresses "lo
     - **No Gradients**: Replace `linear-gradient` with solid colors.
     - **No Glows**: Remove colored `box-shadow` from buttons. Use subtle black shadows only for depth.
     - **Flat Tabs**: Active tabs use solid blue underline, no gradient.
+
+## Update: UX/UI Fixes v1.8
+- **Inputs**: Add `background: #F9F9F9` (Light Mode) / `#2C2C2E` (Dark Mode) to `.input-group` or inputs to define tap area.
+- **Result**: Change `.result-value` color to `var(--accent)` (Blue).
+- **Swap Button**: Add `border: 4px solid var(--card-bg)` to create a "cutout" effect.
+- **Nav Bar**: Add `border-top: 1px solid var(--border)`.

@@ -186,6 +186,15 @@
             align-items: center;
             gap: 12px;
             position: relative;
+            background: var(--bg-color); /* Defined input background */
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .input-row:focus-within {
+            border-color: var(--accent);
         }
 
         .currency-wrapper {
@@ -207,9 +216,9 @@
 
         select {
             appearance: none;
-            background: var(--bg-color);
+            background: transparent; /* Transparent to blend with row */
             border: none;
-            padding: 14px 20px 14px 52px; /* Larger padding */
+            padding: 14px 20px 14px 52px;
             border-radius: 16px;
             font-size: 20px; /* Larger text */
             font-weight: 800; /* Extra Bold */
@@ -239,9 +248,9 @@
             color: var(--border);
         }
 
-        select {
-            appearance: none;
-            background: var(--bg-color);
+        se        input {
+            flex: 1;
+            background: transparent; /* Transparent to blend with row */
             border: none;
             padding: 10px 16px;
             border-radius: 12px;
@@ -254,20 +263,21 @@
 
         /* SWAP BUTTON */
         .swap-btn {
-            width: 56px;
-            height: 56px;
+            width: 64px; /* Larger to account for border */
+            height: 64px;
             background: var(--accent); /* Solid Blue */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            margin: -28px auto;
+            margin: -32px auto; /* Adjusted for size */
             position: relative;
             z-index: 5;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Subtle black shadow */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             cursor: pointer;
             transition: transform 0.2s;
+            border: 4px solid var(--card-bg); /* White ring for contrast */
         }
 
         .swap-btn:active {
@@ -294,9 +304,10 @@
 
         .result-value {
             font-size: 42px;
-            font-weight: 700;
-            color: var(--accent);
+            font-weight: 800; /* Extra Bold */
+            color: var(--accent); /* Highlight result */
             letter-spacing: -1px;
+            cursor: pointer;
         }
 
         .result-sub {
@@ -308,11 +319,12 @@
         /* BOTTOM NAV */
         nav {
             background: var(--card-bg);
-            border-top: 1px solid var(--border);
-            padding: 10px 0;
-            padding-bottom: env(safe-area-inset-bottom); /* iPhone X+ safe area */
+            border-top: 1px solid var(--border); /* Already present, ensuring it's visible */
+            padding: 12px 0; /* Slightly more padding */
+            padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
             display: flex;
             justify-content: space-around;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.02); /* Subtle lift */
         }
 
         .nav-item {
