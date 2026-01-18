@@ -50,3 +50,7 @@ This plan addresses the "faulty layout" by removing complexity and addresses "lo
 - **Logic**: Fetch new rates every **30 seconds**.
 - **UX**: Add a **visual progress bar** (slim line at the top of the card) to indicate the next update.
 - **UI**: Fix alignment of flags within input fields to ensure they are vertically centered and have proper breathing room.
+
+## Update: Cleaner Refresh v1.3
+- **Logic**: Change auto-refresh interval from 30s to **60 seconds**.
+- **UI**: Remove the visual progress bar for a cleaner, less distracting interface. Updates will happen silently in the background.

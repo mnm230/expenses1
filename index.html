@@ -124,19 +124,7 @@
             margin-bottom: 16px;
             transition: transform 0.2s ease;
             position: relative;
-            overflow: hidden; /* For progress bar */
-        }
-
-        /* REFRESH PROGRESS BAR */
-        .refresh-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: var(--accent);
-            width: 0%;
-            transition: width 1s linear;
-            opacity: 0.7;
+            overflow: hidden;
         }
 
         .input-group {
@@ -365,7 +353,6 @@
         <!-- SWAP TAB -->
         <div id="tab-swap" class="view active">
             <div class="card">
-                <div class="refresh-bar" id="refresh-bar"></div>
                 <div class="input-group">
                     <label>You Pay</label>
                     <div class="input-row">
@@ -495,12 +482,10 @@
 
         // --- AUTO REFRESH ---
         let refreshTimer;
-        let progressInterval;
-        const REFRESH_INTERVAL = 30; // Seconds
+        const REFRESH_INTERVAL = 60; // Seconds
 
         function startAutoRefresh() {
             fetchFreshData();
-            resetProgressBar();
             
             // Clear existing
             if (refreshTimer) clearInterval(refreshTimer);
@@ -508,22 +493,10 @@
             // Set new loop
             refreshTimer = setInterval(() => {
                 fetchFreshData();
-                resetProgressBar();
             }, REFRESH_INTERVAL * 1000);
         }
 
-        function resetProgressBar() {
-            const bar = document.getElementById('refresh-bar');
-            bar.style.transition = 'none';
-            bar.style.width = '0%';
-            
-            // Force reflow
-            void bar.offsetWidth;
-            
-            // Start animation
-            bar.style.transition = `width ${REFRESH_INTERVAL}s linear`;
-            bar.style.width = '100%';
-        }
+
 
         // --- CORE LOGIC ---
         function loadCachedData() {
